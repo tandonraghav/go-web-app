@@ -11,23 +11,18 @@ type DB struct {
 	SQL *sql.DB
 }
 
-var db = &DB{}
+var DataSource = &DB{}
 
 func ConnectSql(host, port, uname, pass, dbname string) (*DB, error) {
 	dbSource := fmt.Sprintf(
-		"root:%s@tcp(%s:%s)/%s?charset=utf8",
+		"root:%s@tcp(%s:%s)/%s",
 		pass,
 		host,
 		port,
 		dbname,
 	)
-
-	d, err := sql.Open("mysql", dbSource)
-
-	if err != nil {
-		panic(err)
-	}
-	defer d.Close()
-	db.SQL = d
-	return db, nil
+	d, _ := sql.Open("mysql", dbSource)
+	err := d.Ping()
+	DataSource.SQL = d
+	return DataSource, err
 }
